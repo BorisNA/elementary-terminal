@@ -130,7 +130,7 @@ namespace Terminal {
             private set;
         }
 
-        private unowned Gtk.Clipboard clipboard;
+        private unowned Gdk.Clipboard clipboard;
 
         private GLib.SimpleAction copy_action;
         private GLib.SimpleAction copy_output_action;
@@ -145,7 +145,7 @@ namespace Terminal {
         private Gtk.EventControllerMotion motion_controller;
         private Gtk.EventControllerScroll scroll_controller;
         private Gtk.EventControllerKey key_controller;
-        private Gtk.GestureMultiPress press_gesture;
+        private Gtk.GestureClick press_gesture;
 
         private bool modifier_pressed = false;
         private double scroll_delta = 0.0;
@@ -229,17 +229,17 @@ namespace Terminal {
                 disconnect (once);
             });
 
-            /* target entries specify what kind of data the terminal widget accepts */
-            Gtk.TargetEntry uri_entry = { "text/uri-list", Gtk.TargetFlags.OTHER_APP, DropTargets.URILIST };
-            Gtk.TargetEntry string_entry = { "STRING", Gtk.TargetFlags.OTHER_APP, DropTargets.STRING };
-            Gtk.TargetEntry text_entry = { "text/plain", Gtk.TargetFlags.OTHER_APP, DropTargets.TEXT };
+            // /* target entries specify what kind of data the terminal widget accepts */
+            // Gtk.TargetEntry uri_entry = { "text/uri-list", Gtk.TargetFlags.OTHER_APP, DropTargets.URILIST };
+            // Gtk.TargetEntry string_entry = { "STRING", Gtk.TargetFlags.OTHER_APP, DropTargets.STRING };
+            // Gtk.TargetEntry text_entry = { "text/plain", Gtk.TargetFlags.OTHER_APP, DropTargets.TEXT };
 
-            Gtk.TargetEntry[] targets = { };
-            targets += uri_entry;
-            targets += string_entry;
-            targets += text_entry;
+            // Gtk.TargetEntry[] targets = { };
+            // targets += uri_entry;
+            // targets += string_entry;
+            // targets += text_entry;
 
-            Gtk.drag_dest_set (this, Gtk.DestDefaults.ALL, targets, Gdk.DragAction.COPY);
+            // Gtk.drag_dest_set (this, Gtk.DestDefaults.ALL, targets, Gdk.DragAction.COPY);
 
             /* Make Links Clickable */
             this.drag_data_received.connect (drag_received);
@@ -298,7 +298,7 @@ namespace Terminal {
             allow_hyperlink = has_focus;
         }
 
-        private void button_pressed (Gtk.GestureMultiPress gesture, int n_press, double x, double y) {
+        private void button_pressed (Gtk.GestureClick gesture, int n_press, double x, double y) {
             link_uri = null;
 
             if (gesture.get_current_button () == Gdk.BUTTON_SECONDARY) {
@@ -314,7 +314,7 @@ namespace Terminal {
             }
         }
 
-        private void button_released (Gtk.GestureMultiPress gesture, int n_press, double x, double y) {
+        private void button_released (Gtk.GestureClick gesture, int n_press, double x, double y) {
             if (gesture.get_current_button () == Gdk.BUTTON_PRIMARY) {
                 if (allow_hyperlink) {
                     link_uri = get_link (gesture.get_last_event (null));
@@ -721,35 +721,35 @@ namespace Terminal {
             init_complete = true;
         }
 
-        public void drag_received (Gdk.DragContext context, int x, int y,
-                                   Gtk.SelectionData selection_data, uint target_type, uint time_) {
-            switch (target_type) {
-                case DropTargets.URILIST:
-                    var uris = selection_data.get_uris ();
-                    string path;
-                    File file;
+        // public void drag_received (Gdk.DragContext context, int x, int y,
+        //                            Gtk.SelectionData selection_data, uint target_type, uint time_) {
+        //     switch (target_type) {
+        //         case DropTargets.URILIST:
+        //             var uris = selection_data.get_uris ();
+        //             string path;
+        //             File file;
 
-                    for (var i = 0; i < uris.length; i++) {
-                         file = File.new_for_uri (uris[i]);
-                         if ((path = file.get_path ()) != null) {
-                             uris[i] = Shell.quote (path) + " ";
-                        }
-                    }
+        //             for (var i = 0; i < uris.length; i++) {
+        //                  file = File.new_for_uri (uris[i]);
+        //                  if ((path = file.get_path ()) != null) {
+        //                      uris[i] = Shell.quote (path) + " ";
+        //                 }
+        //             }
 
-                    var uris_s = string.joinv ("", uris);
-                    this.feed_child (uris_s.data);
-                    break;
-                case DropTargets.STRING:
-                case DropTargets.TEXT:
-                    var data = selection_data.get_text ();
+        //             var uris_s = string.joinv ("", uris);
+        //             this.feed_child (uris_s.data);
+        //             break;
+        //         case DropTargets.STRING:
+        //         case DropTargets.TEXT:
+        //             var data = selection_data.get_text ();
 
-                    if (data != null) {
-                        this.feed_child (data.data);
-                    }
+        //             if (data != null) {
+        //                 this.feed_child (data.data);
+        //             }
 
-                    break;
-            }
-        }
+        //             break;
+        //     }
+        // }
 
         public void remember_position () {
             long col, row;
